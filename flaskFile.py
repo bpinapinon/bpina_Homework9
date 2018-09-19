@@ -8,9 +8,9 @@ from datetime import datetime
 import datetime as dt
 
 
-###################################################
+###########
 # Database Setup
-###################################################
+###########
 engine = create_engine("sqlite:///Resources/hawaii.sqlite")
 Base = automap_base()
 Base.prepare(engine, reflect=True)
@@ -23,15 +23,15 @@ Stations = Base.classes.station
 session = Session(engine)
 
 
-####################################################
+###########
 # Flask Setup
-###################################################
+###########
 app = Flask(__name__)
 
 
-####################################################
+###########
 # Flask Routes
-####################################################
+###########
 
 #----------------------
 # Home page route
@@ -57,13 +57,13 @@ def home():
 @app.route("/api/v1.0/precipitation")
 def precipitation():   
      
-    most_recent = session.query(Measurements.date).order_by(Measurements.date.desc()).first()
-    last_date = most_recent[0]
-    year_before = last_date.replace(year = (last_date.year - 1))
-    year_before = year_before.strftime("%Y-%m-%d")
+    MostRecent = session.query(Measurements.date).order_by(Measurements.date.desc()).first()
+    LastDate = MostRecent[0]
+    YearBefore = LastDate.replace(year = (LastDate.year - 1))
+    YearBefore = YearBefore.strftime("%Y-%m-%d")
 
     precip_list = []
-    precip = session.query(Stations.name, Measurements.date, Measurements.prcp).filter(Measurements.station==Stations.station).filter(Measurements.date>=year_before).order_by(Measurements.date).all()
+    precip = session.query(Stations.name, Measurements.date, Measurements.prcp).filter(Measurements.station==Stations.station).filter(Measurements.date>=YearBefore).order_by(Measurements.date).all()
     for p in precip:
         # print({"date":p[0],"tobs":p[1]})
         precip_list.append({"station":p[0],"date":p[1],"prcp":p[2]})
@@ -89,12 +89,12 @@ def stations():
 #----------------------
 @app.route("/api/v1.0/tobs")
 def tobs():
-    most_recent = session.query(Measurements.date).order_by(Measurements.date.desc()).first()
-    last_date = most_recent[0]
-    year_before = last_date.replace(year = (last_date.year - 1))
-    year_before = year_before.strftime("%Y-%m-%d")
+    MostRecent = session.query(Measurements.date).order_by(Measurements.date.desc()).first()
+    LastDate = MostRecent[0]
+    YearBefore = LastDate.replace(year = (LastDate.year - 1))
+    YearBefore = YearBefore.strftime("%Y-%m-%d")
 
-    tobs = session.query(Stations.name,Measurements.date, Measurements.tobs).filter(Measurements.station==Stations.station).filter(Measurements.date>=year_before).order_by(Measurements.date).all()
+    tobs = session.query(Stations.name,Measurements.date, Measurements.tobs).filter(Measurements.station==Stations.station).filter(Measurements.date>=YearBefore).order_by(Measurements.date).all()
     tobs_List = []
     for t in tobs:
        tobs_List.append({"station":t[0],"date":t[1],"temperature observation":t[2]})
